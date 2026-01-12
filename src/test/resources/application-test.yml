@@ -4,7 +4,7 @@ spring:
   application:
     name: billing
   datasource:
-    url: 'jdbc:h2:file:~/billing;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE'
+    url: 'jdbc:h2:mem:~/billing-test;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE'
     username: sa
     password: '123'
   h2:
