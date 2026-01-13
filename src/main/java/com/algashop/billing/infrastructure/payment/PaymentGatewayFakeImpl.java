@@ -1,4 +1,4 @@
-package com.algashop.billing.infrastructure.persistence.payment;
+package com.algashop.billing.infrastructure.payment;
 
 import com.algashop.billing.domain.model.invoice.PaymentMethod;
 import com.algashop.billing.domain.model.invoice.payment.Payment;
