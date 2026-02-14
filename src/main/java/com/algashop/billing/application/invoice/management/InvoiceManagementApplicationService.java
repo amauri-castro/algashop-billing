@@ -7,6 +7,7 @@ import com.algashop.billing.domain.model.invoice.*;
 import com.algashop.billing.domain.model.invoice.payment.Payment;
 import com.algashop.billing.domain.model.invoice.payment.PaymentGatewayService;
 import com.algashop.billing.domain.model.invoice.payment.PaymentRequest;
+import com.algashop.billing.domain.model.invoice.payment.PaymentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -63,6 +64,13 @@ public class InvoiceManagementApplicationService {
         invoiceRepository.saveAndFlush(invoice);
     }
 
+    @Transactional
+    public void updatePaymentStatus(UUID invoiceId, PaymentStatus paymentStatus) {
+        Invoice invoice = invoiceRepository.findById(invoiceId).orElseThrow(() -> new InvoiceNotFoundException());
+        invoice.updatePaymentStatus(paymentStatus);
+        invoiceRepository.saveAndFlush(invoice);
+    }
+
     private PaymentRequest toPaymentRequest(Invoice invoice) {
         return PaymentRequest.builder()
                 .amount(invoice.getTotalAmount())
@@ -112,4 +120,5 @@ public class InvoiceManagementApplicationService {
             throw new CreditCardNotFoundException();
         }
     }
+
 }
