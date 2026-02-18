@@ -9,9 +9,13 @@ import com.algashop.billing.domain.model.invoice.payment.Payment;
 import com.algashop.billing.domain.model.invoice.payment.PaymentGatewayService;
 import com.algashop.billing.domain.model.invoice.payment.PaymentRequest;
 import com.algashop.billing.infrastructure.payment.AlgaShopPaymentProperties;
+import com.algashop.billing.presentation.BadGatewayException;
+import com.algashop.billing.presentation.GatewayTimeoutException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.util.UUID;
 
@@ -28,13 +32,27 @@ public class PaymentGatewayServiceFastpayImpl implements PaymentGatewayService {
     @Override
     public Payment capture(PaymentRequest request) {
         FastpayPaymentInput input = convertToInput(request);
-        FastpayPaymentModel response = fastpayPaymentAPIClient.capture(input);
+        FastpayPaymentModel response;
+        try {
+            response = fastpayPaymentAPIClient.capture(input);
+        } catch (ResourceAccessException e) {
+            throw new GatewayTimeoutException("Fastpay API Timeout", e);
+        } catch (HttpClientErrorException e) {
+            throw new BadGatewayException("Fastpay API Bad Gateway", e);
+        }
         return convertToPayment(response);
     }
 
     @Override
     public Payment findByCode(String gatewayCode) {
-        FastpayPaymentModel response = fastpayPaymentAPIClient.findById(gatewayCode);
+        FastpayPaymentModel response;
+        try {
+            response = fastpayPaymentAPIClient.findById(gatewayCode);
+        } catch (ResourceAccessException e) {
+            throw new GatewayTimeoutException("Fastpay API Timeout", e);
+        } catch (HttpClientErrorException e) {
+            throw new BadGatewayException("Fastpay API Bad Gateway", e);
+        }
         return convertToPayment(response);
     }
 

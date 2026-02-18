@@ -8,6 +8,6 @@ import java.util.UUID;
 
 public interface CreditCardRepository extends JpaRepository<CreditCard, UUID> {
     Optional<CreditCard> findByCustomerIdAndId(UUID customerId, UUID creditCardId);
-
     List<CreditCard> findAllByCustomerId(UUID customerId);
+    boolean existsByIdAndCustomerId(UUID creditCardId, UUID customerId);
 }
