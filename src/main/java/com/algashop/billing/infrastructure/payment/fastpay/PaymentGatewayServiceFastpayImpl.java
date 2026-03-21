@@ -24,7 +24,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PaymentGatewayServiceFastpayImpl implements PaymentGatewayService {
 
-    private final FastpayPaymentAPIClient fastpayPaymentAPIClient;
+    private final ResilientFastpayPaymentAPIClient fastpayPaymentAPIClient;
     private final CreditCardRepository creditCardRepository;
 
     private final AlgaShopPaymentProperties algaShopPaymentProperties;
@@ -32,27 +32,15 @@ public class PaymentGatewayServiceFastpayImpl implements PaymentGatewayService {
     @Override
     public Payment capture(PaymentRequest request) {
         FastpayPaymentInput input = convertToInput(request);
-        FastpayPaymentModel response;
-        try {
-            response = fastpayPaymentAPIClient.capture(input);
-        } catch (ResourceAccessException e) {
-            throw new GatewayTimeoutException("Fastpay API Timeout", e);
-        } catch (HttpClientErrorException e) {
-            throw new BadGatewayException("Fastpay API Bad Gateway", e);
-        }
+        FastpayPaymentModel response = fastpayPaymentAPIClient.capture(input);
+
         return convertToPayment(response);
     }
 
     @Override
     public Payment findByCode(String gatewayCode) {
-        FastpayPaymentModel response;
-        try {
-            response = fastpayPaymentAPIClient.findById(gatewayCode);
-        } catch (ResourceAccessException e) {
-            throw new GatewayTimeoutException("Fastpay API Timeout", e);
-        } catch (HttpClientErrorException e) {
-            throw new BadGatewayException("Fastpay API Bad Gateway", e);
-        }
+        FastpayPaymentModel response = fastpayPaymentAPIClient.findById(gatewayCode);
+
         return convertToPayment(response);
     }
 
