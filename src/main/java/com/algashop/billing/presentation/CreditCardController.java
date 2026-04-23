@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+import static com.algashop.billing.infrastructure.security.SecurityAnnotations.CanReadCreditCards;
+import static com.algashop.billing.infrastructure.security.SecurityAnnotations.CanWriteCreditCards;
+
 @RestController
 @RequestMapping("/api/v1/customers/{customerId}/credit-cards")
 @RequiredArgsConstructor
@@ -22,6 +25,7 @@ public class CreditCardController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @CanWriteCreditCards
     public CreditCardOutput register(@PathVariable UUID customerId,
                                      @RequestBody @Valid TokenizedCreditCardInput input) {
         input.setCustomerId(customerId);
@@ -30,16 +34,19 @@ public class CreditCardController {
     }
 
     @GetMapping
+    @CanReadCreditCards
     public List<CreditCardOutput> findAllByCustomer(@PathVariable UUID customerId) {
         return creditCardQueryService.findByCustomer(customerId);
     }
 
     @GetMapping("/{creditCardId}")
+    @CanReadCreditCards
     public CreditCardOutput findOne(@PathVariable UUID customerId, @PathVariable UUID creditCardId) {
         return creditCardQueryService.findOne(customerId, creditCardId);
     }
 
     @DeleteMapping("/{creditCardId}")
+    @CanWriteCreditCards
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable UUID customerId, @PathVariable UUID creditCardId) {
         creditCardManagementService.delete(customerId, creditCardId);

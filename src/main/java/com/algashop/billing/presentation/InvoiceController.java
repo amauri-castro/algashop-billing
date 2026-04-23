@@ -4,6 +4,7 @@ import com.algashop.billing.application.invoice.management.GenerateInvoiceInput;
 import com.algashop.billing.application.invoice.management.InvoiceManagementApplicationService;
 import com.algashop.billing.application.invoice.query.InvoiceOutput;
 import com.algashop.billing.application.invoice.query.InvoiceQueryService;
+import com.algashop.billing.infrastructure.security.SecurityAnnotations;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
+
+import static com.algashop.billing.infrastructure.security.SecurityAnnotations.*;
 
 @RestController
 @RequestMapping("/api/v1/orders/{orderId}/invoice")
@@ -23,6 +26,7 @@ public class InvoiceController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @CanWriteInvoices
     public InvoiceOutput generate(@PathVariable String orderId,
                                   @RequestBody @Valid GenerateInvoiceInput input) {
         input.setOrderId(orderId);
@@ -36,6 +40,7 @@ public class InvoiceController {
     }
 
     @GetMapping
+    @CanReadInvoices
     public InvoiceOutput findByOrder(@PathVariable String orderId) {
         return invoiceQueryService.findByOrderId(orderId);
     }

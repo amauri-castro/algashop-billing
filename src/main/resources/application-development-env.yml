@@ -13,6 +13,11 @@ spring:
     user: postgres
     password: postgres
     url: jdbc:postgresql://localhost:5432/billing
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://127.0.0.1:8081
 
 algashop:
   integrations:
