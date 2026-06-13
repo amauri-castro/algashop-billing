@@ -97,11 +97,11 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({AuthorizationDeniedException.class})
-    public ProblemDetail handleAuthorizationDeniedException(Exception e) {
+    public ProblemDetail handleAuthorizationDeniedException(AuthorizationDeniedException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
-        problemDetail.setTitle("Unauthorized");
+        problemDetail.setTitle("Forbidden");
         problemDetail.setDetail(e.getMessage());
-        problemDetail.setType(URI.create("/errors/unauthorized"));
+        problemDetail.setType(URI.create("/errors/forbidden"));
         return problemDetail;
     }
 }
