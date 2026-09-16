@@ -2,7 +2,7 @@ package com.algashop.billing.application.security;
 
 import java.util.UUID;
 
-public interface SecurityCheckApplicationService {
+public interface SecurityChecks {
     UUID getAuthenticatedUserId();
     boolean isAuthenticated();
     boolean isMachineAuthenticated();
