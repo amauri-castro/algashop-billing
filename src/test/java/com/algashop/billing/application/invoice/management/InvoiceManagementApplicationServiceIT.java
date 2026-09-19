@@ -24,24 +24,21 @@ class InvoiceManagementApplicationServiceIT extends AbstractApplicationIT {
 
     @Autowired
     private InvoiceManagementApplicationService applicationService;
-
     @Autowired
     private InvoiceRepository invoiceRepository;
-
     @Autowired
     private CreditCardRepository creditCardRepository;
-
     @MockitoSpyBean
     private InvoicingService invoicingService;
-
     @MockitoBean
     private PaymentGatewayService paymentGatewayService;
-
     @MockitoSpyBean
     private InvoiceEventListener invoiceEventListener;
 
     @Test
     public void shouldGenerateInvoiceWithCreditCardAsPayment() {
+        Mockito.when(securityChecks.getAuthenticatedUserId()).thenReturn(UUID.randomUUID());
+        Mockito.when(securityChecks.isAuthenticated()).thenReturn(true);
         UUID customerId = UUID.randomUUID();
         CreditCard creditCard = CreditCardTestDataBuilder.aCreditCard().customerId(customerId).build();
         creditCardRepository.saveAndFlush(creditCard);

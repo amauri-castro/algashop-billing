@@ -26,7 +26,7 @@ public class InvoiceController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @CanWriteInvoices
+    @CanGenerateInvoices
     public InvoiceOutput generate(@PathVariable String orderId,
                                   @RequestBody @Valid GenerateInvoiceInput input) {
         input.setOrderId(orderId);

@@ -12,44 +12,6 @@ import java.util.UUID;
 class InvoiceTest {
 
     @Test
-    public void shouldIssueInvoice() {
-        Invoice invoice = Invoice.issue(
-                "01226N0693HDA",
-                UUID.randomUUID(),
-                InvoiceTestDataBuilder.aPayer(),
-                Set.of(InvoiceTestDataBuilder.aLineItem())
-        );
-
-        Assertions.assertThat(invoice.getId()).isNotNull();
-        Assertions.assertThat(invoice.getTotalAmount()).isNotNull();
-        Assertions.assertThat(invoice.getIssuedAt()).isNotNull();
-        Assertions.assertThat(InvoiceStatus.UNPAID).isEqualTo(invoice.getStatus());
-
-    }
-
-    @Test
-    public void shouldMarkAsPaid() {
-        Invoice invoice = InvoiceTestDataBuilder.anInvoice().build();
-
-        invoice.markAsPaid();
-
-        Assertions.assertThat(invoice.getStatus()).isEqualTo(InvoiceStatus.PAID);
-        Assertions.assertThat(invoice.getIssuedAt()).isNotNull();
-    }
-
-    @Test
-    public void shouldCancelWithReason() {
-        Invoice invoice = InvoiceTestDataBuilder.anInvoice().build();
-
-        String cancelReason = "The customer regretted the purchase.";
-        invoice.cancel(cancelReason);
-
-        Assertions.assertThat(invoice.getStatus()).isEqualTo(InvoiceStatus.CANCELED);
-        Assertions.assertThat(invoice.getCanceledAt()).isNotNull();
-        Assertions.assertThat(invoice.getCancelReason()).isEqualTo(cancelReason);
-    }
-
-    @Test
     public void shouldIssueInvoiceCorrectly() {
         String orderId = "123";
         UUID customerId = UUID.randomUUID();
@@ -70,6 +32,41 @@ class InvoiceTest {
                 i -> Assertions.assertThat(i.getTotalAmount()).isEqualTo(expectedTotalAmount),
                 i -> Assertions.assertThat(i.getStatus()).isEqualTo(InvoiceStatus.UNPAID)
         );
+    }
+
+    @Test
+    public void shouldMarkAsPaid() {
+        Invoice invoice = InvoiceTestDataBuilder.anInvoice().build();
+
+        invoice.markAsPaid();
+
+        Assertions.assertThat(invoice.getStatus()).isEqualTo(InvoiceStatus.PAID);
+        Assertions.assertThat(invoice.getIssuedAt()).isNotNull();
+    }
+
+    @Test
+    public void shouldMarkInvoiceAsPaidWhenUnpaid() {
+        Invoice invoice = InvoiceTestDataBuilder.anInvoice().build();
+        invoice.changePaymentSettings(PaymentMethod.GATEWAY_BALANCE, null);
+
+        invoice.markAsPaid();
+
+        Assertions.assertWith(invoice,
+                i -> Assertions.assertThat(i.isPaid()).isTrue(),
+                i -> Assertions.assertThat(i.getPaidAt()).isNotNull()
+        );
+    }
+
+    @Test
+    public void shouldCancelWithReason() {
+        Invoice invoice = InvoiceTestDataBuilder.anInvoice().build();
+
+        String cancelReason = "The customer regretted the purchase.";
+        invoice.cancel(cancelReason);
+
+        Assertions.assertThat(invoice.getStatus()).isEqualTo(InvoiceStatus.CANCELED);
+        Assertions.assertThat(invoice.getCanceledAt()).isNotNull();
+        Assertions.assertThat(invoice.getCancelReason()).isEqualTo(cancelReason);
     }
 
     @Test
